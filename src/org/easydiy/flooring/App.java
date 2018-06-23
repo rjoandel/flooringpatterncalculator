@@ -29,7 +29,7 @@ public class App
   int default_plankWidth = 156;
   int default_roomLength = 3090;
   int default_roomWidth = 2450;
-  int default_expansionGap = 5;
+  int default_expansionGap = 10;
 
   public App()
   {
@@ -47,6 +47,9 @@ public class App
 
     JLabel firstPlankWidthFieldLabel = new JLabel("First plank width");
     final JTextField firstPlankWidthField = new JTextField(String.valueOf(canvas.inputwidth), 10);
+
+    JLabel expansionGapLabel = new JLabel("expansionGap");
+    final JTextField expansionGapField = new JTextField(String.valueOf(canvas.expansionGap), 10);
 
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
@@ -67,6 +70,8 @@ public class App
     optionsPanel.add(firstPlankLengthField);
     optionsPanel.add(firstPlankWidthFieldLabel);
     optionsPanel.add(firstPlankWidthField);
+    optionsPanel.add(expansionGapLabel);
+    optionsPanel.add(expansionGapField);
     basePanel.setLayout(new BorderLayout());
     basePanel.add(optionsPanel, BorderLayout.NORTH);
     JScrollPane panel = new JScrollPane(canvas);
@@ -83,6 +88,7 @@ public class App
         canvas.inputwidth = Integer.parseInt(firstPlankWidthField.getText());
         canvas.roomLength = Integer.parseInt(roomLengthField.getText());
         canvas.roomWidth = Integer.parseInt(roomWidthField.getText());
+        canvas.expansionGap = Integer.parseInt(expansionGapField.getText());
         basePanel.repaint();
 
       }
@@ -93,6 +99,7 @@ public class App
     firstPlankWidthField.addActionListener(commonListener);
     roomLengthField.addActionListener(commonListener);
     roomWidthField.addActionListener(commonListener);
+    expansionGapField.addActionListener(commonListener);
 
     //frame.setPreferredSize(new Dimension(1000,500));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
