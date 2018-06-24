@@ -1,11 +1,17 @@
-package org.easydiy.flooring;
+package org.easydiy.flooring.algorithms;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PatternCalculator
+import org.easydiy.flooring.ui.Board;
+
+/**
+ * Standard implementation of the PatternCalculator, generates a pattern which minimises waste by keeping cuts to the last plank of a row
+ * and reuse the other piece for the start of the next row 
+ */
+public class NoWastePatternCalculator implements PatternCalculator
 {
  
   int roomLength;
@@ -18,6 +24,7 @@ public class PatternCalculator
   int plankNumber;
   List<Board> pattern = new ArrayList<>();
   
+  @Override
   public List<Board> calculatePattern(int roomLength, int roomWidth, int plankLength, int plankWidth, int expansionGap, int firstPlankLength, int firstPlankWidth)
   {
     
@@ -40,7 +47,7 @@ public class PatternCalculator
     int rowIndex = 1;
     nextplanklength = doRow(rowIndex, nextplanklength,nextplankwidth);
     
-    //middle rows, full size witdth
+    //middle rows, full size width
     nextplankwidth=plankWidth;
     for  (rowIndex = 2; rowIndex < numberOfRows; rowIndex++)
     {
@@ -89,13 +96,4 @@ public class PatternCalculator
     Point nextstartingPoint = new Point(x+length, y);
     return nextstartingPoint;
   }
-  
-  public static void main(String[] args)
-  {
-    PatternCalculator calc = new PatternCalculator();
-    calc.calculatePattern(3090, 2450, 1380, 156, 5, 1380, 156);
-    
-  }
-  
-  
 }

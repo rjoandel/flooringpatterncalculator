@@ -1,4 +1,4 @@
-package org.easydiy.flooring;
+package org.easydiy.flooring.ui;
 
 import java.awt.Rectangle;
 

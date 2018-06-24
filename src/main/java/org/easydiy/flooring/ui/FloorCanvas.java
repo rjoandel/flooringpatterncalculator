@@ -1,4 +1,4 @@
-package org.easydiy.flooring;
+package org.easydiy.flooring.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+
+import org.easydiy.flooring.ProjectParameters;
+import org.easydiy.flooring.algorithms.NoWastePatternCalculator;
+import org.easydiy.flooring.algorithms.PatternCalculator;
 
 public class FloorCanvas extends JComponent
 {
@@ -28,15 +32,16 @@ public class FloorCanvas extends JComponent
 
   private boolean printable;
   
-  public FloorCanvas(int roomLength, int roomWidth, int plankLength, int plankWidth, int expansionGap)
+  public FloorCanvas(ProjectParameters params)
   {
-    this.roomLength = roomLength;
-    this.roomWidth = roomWidth;
-    this.plankLength = plankLength;
-    this.plankWidth = plankWidth;
-    this.expansionGap = expansionGap;
-    this.inputlength = plankLength;
-    this.inputwidth = plankWidth;
+    this.roomLength = params.getRoomLength();
+    this.roomWidth = params.getRoomWidth();
+    this.plankLength = params.getPlankLength();
+    this.plankWidth = params.getPlankWidth();
+    this.expansionGap = params.getExpansionGap();
+    this.inputlength = params.getFirstPlankLength();
+    this.inputwidth = params.getFirstPlankWidth();
+    
     this.dpi = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
     System.out.println("screen DPI=" + dpi);
   }
@@ -66,7 +71,7 @@ public class FloorCanvas extends JComponent
     int nextplankwidth = inputwidth;
     int nextplanklength = inputlength;
     
-    PatternCalculator calc = new PatternCalculator();
+    PatternCalculator calc = new NoWastePatternCalculator();
     pattern = calc.calculatePattern(roomLength, roomWidth, plankLength, plankWidth,expansionGap, nextplanklength, nextplankwidth);
     
     drawPattern(g, false);
