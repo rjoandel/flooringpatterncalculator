@@ -5,95 +5,84 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.easydiy.flooring.ProjectParameters;
 import org.easydiy.flooring.ui.Board;
 
 /**
- * Standard implementation of the PatternCalculator, generates a pattern which minimises waste by keeping cuts to the last plank of a row
+ * Standard implementation of the PatternCalculator, generates a pattern which minimises waste by keeping cuts to the last Board of a row
  * and reuse the other piece for the start of the next row 
  */
 public class NoWastePatternCalculator implements PatternCalculator
 {
  
-  int roomLength;
-  int roomWidth; 
-  int plankLength;
-  int plankWidth;
-  int expansionGap;
-  int firstPlankLength;
-  int firstPlankWidth;
-  int plankNumber;
-  List<Board> pattern = new ArrayList<>();
+  private ProjectParameters project;
+  private int boardNumber;
+  private List<Board> pattern = new ArrayList<>();
   
   @Override
-  public List<Board> calculatePattern(int roomLength, int roomWidth, int plankLength, int plankWidth, int expansionGap, int firstPlankLength, int firstPlankWidth)
+  public List<Board> calculatePattern(ProjectParameters pp)
   {
+    this.project = pp;
+    boardNumber = 1;
+    int nextBoardwidth = project.getFirstBoardWidth();
+    int nextBoardlength = project.getFirstBoardLength();
     
-    this.roomLength = roomLength;
-    this.roomWidth = roomWidth; 
-    this.plankLength = plankLength;
-    this.plankWidth = plankWidth;
-    this.expansionGap = expansionGap;
-    this.firstPlankLength = firstPlankLength;
-    this.firstPlankWidth = firstPlankWidth;
-    
-    plankNumber = 1;
-    int nextplankwidth = firstPlankWidth;
-    int nextplanklength = firstPlankLength;
-    
-    int numberOfRows = (int) Math.ceil((double)(roomWidth - (expansionGap*2)) / plankWidth);    
+    int numberOfRows = (int) Math.ceil((double)(project.getRoomWidth() - (project.getExpansionGap()*2)) / project.getBoardWidth());    
     System.out.println("Number of rows required = " + numberOfRows);
     
     //first row, can vary length and width;
     int rowIndex = 1;
-    nextplanklength = doRow(rowIndex, nextplanklength,nextplankwidth);
+    nextBoardlength = doRow(rowIndex, nextBoardlength,nextBoardwidth);
     
     //middle rows, full size width
-    nextplankwidth=plankWidth;
+    nextBoardwidth=project.getBoardWidth();
     for  (rowIndex = 2; rowIndex < numberOfRows; rowIndex++)
     {
-      nextplanklength = doRow(rowIndex, nextplanklength,nextplankwidth);
+      nextBoardlength = doRow(rowIndex, nextBoardlength,nextBoardwidth);
     }
     //last row, calculate width from space left over
-    nextplankwidth = Math.min(plankWidth, roomWidth-(expansionGap*2)-((rowIndex-1)*plankWidth));
-    doRow(rowIndex, nextplanklength, nextplankwidth);
+    nextBoardwidth = Math.min(project.getBoardWidth(), project.getRoomWidth()-(project.getExpansionGap()*2)-((rowIndex-1)*project.getBoardWidth()));
+    doRow(rowIndex, nextBoardlength, nextBoardwidth);
     
     System.out.println(pattern);
     return pattern;
   }
   
-  private int doRow(int rowNumber, int firstPlankLength, int firstPlankWidth)
+  private int doRow(int rowNumber, int firstBoardLength, int firstBoardWidth)
   { 
     System.out.print("Row " + rowNumber + " [");
-    int x = 0 + expansionGap;
-    int y = plankWidth*(rowNumber-1)+expansionGap;
-    Point nextPlankPosition = putPlank(x, y, firstPlankLength, firstPlankWidth);
-    plankNumber++;
-    int nextRowsFirstPlankLength = plankLength;
-    while(nextPlankPosition.x < roomLength-expansionGap)
+    int x = 0 + project.getExpansionGap();
+    int y = project.getBoardWidth()*(rowNumber-1)+project.getExpansionGap();
+    Point nextBoardPosition = putBoard(x, y, firstBoardLength, firstBoardWidth);
+    boardNumber++;
+    int nextRowsFirstBoardLength = project.getBoardLength();
+    while(nextBoardPosition.x < project.getRoomLength()-project.getExpansionGap())
     {
-      x = nextPlankPosition.x;
-      boolean doNotCountCutPlankTwice = false;
-      if (roomLength-expansionGap-nextPlankPosition.x < plankLength)
+      x = nextBoardPosition.x;
+      boolean doNotCountCutBoardTwice = false;
+      if (project.getRoomLength()-project.getExpansionGap()-nextBoardPosition.x < project.getBoardLength())
       {
-        nextRowsFirstPlankLength = plankLength - (roomLength-expansionGap-nextPlankPosition.x);
-        doNotCountCutPlankTwice = true;
+        nextRowsFirstBoardLength = project.getBoardLength() - (project.getRoomLength()-project.getExpansionGap()-nextBoardPosition.x);
+        doNotCountCutBoardTwice = true;
       }
-      nextPlankPosition = putPlank(x, y, Math.min(plankLength, roomLength-expansionGap-nextPlankPosition.x),firstPlankWidth);
-      if (!doNotCountCutPlankTwice)
+      nextBoardPosition = putBoard(x, y, Math.min(project.getBoardLength(), project.getRoomLength()-project.getExpansionGap()-nextBoardPosition.x),firstBoardWidth);
+      if (!doNotCountCutBoardTwice)
       {
-        plankNumber++;
+        boardNumber++;
       }
     }
     System.out.println("]");
-    return nextRowsFirstPlankLength;
+    return nextRowsFirstBoardLength;
     
   }
 
-  private Point putPlank(int x, int y, int length, int width)
+  private Point putBoard(int x, int y, int length, int width)
   { 
-    System.out.print(" (Plank #" + plankNumber + " at [" + x + "," + y + "], length="+length + ",width=" + width + ")");
-    pattern.add(new Board(plankNumber,x,y, length, width));
+    System.out.print(" (Board #" + boardNumber + " at [" + x + "," + y + "], length="+length + ",width=" + width + ")");
+    pattern.add(new Board(boardNumber,x,y, length, width));
     Point nextstartingPoint = new Point(x+length, y);
     return nextstartingPoint;
   }
+
+
 }

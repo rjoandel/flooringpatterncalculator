@@ -6,8 +6,8 @@ Main features
 -------------
 
 * Configurable dimensions of rectangular room.
-* Configurable dimensions of planks
-* Configurable first plank size
+* Configurable dimensions of boards
+* Configurable first board size
 * Calculates the number of boards needed.
 * 'No waste algorithm' : the other bit of a board cut at the end of row gets reused on the next row.
 * Takes into account expansion gap on each sides.

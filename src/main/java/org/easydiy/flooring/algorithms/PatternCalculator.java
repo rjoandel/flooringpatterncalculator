@@ -2,6 +2,7 @@ package org.easydiy.flooring.algorithms;
 
 import java.util.List;
 
+import org.easydiy.flooring.ProjectParameters;
 import org.easydiy.flooring.ui.Board;
 
 /*
@@ -10,6 +11,6 @@ import org.easydiy.flooring.ui.Board;
 public interface PatternCalculator
 {
 
-  List<Board> calculatePattern(int roomLength, int roomWidth, int plankLength, int plankWidth, int expansionGap, int firstPlankLength, int firstPlankWidth);
+  List<Board> calculatePattern(ProjectParameters project);
 
 }

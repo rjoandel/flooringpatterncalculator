@@ -2,43 +2,43 @@ package org.easydiy.flooring;
 
 public class ProjectParameters
 {
-  private int plankLength;
-  private int plankWidth;
+  private int boardLength;
+  private int boardWidth;
   private int roomLength;
   private int roomWidth;
-  private int firstPlankLength;
-  private int firstPlankWidth;
+  private int firstBoardLength;
+  private int firstBoardWidth;
   private int expansionGap;
 
-  public ProjectParameters(int roomLength, int roomWidth, int plankLength, int plankWidth, int firstPlankLength, int firstPlankWidth, int expansionGap)
+  public ProjectParameters(int roomLength, int roomWidth, int boardLength, int boardWidth, int firstBoardLength, int firstBoardWidth, int expansionGap)
   {
-    this.plankLength = plankLength;
-    this.plankWidth = plankWidth;
+    this.boardLength = boardLength;
+    this.boardWidth = boardWidth;
     this.roomLength = roomLength;
     this.roomWidth = roomWidth;
-    this.firstPlankLength = firstPlankLength;
-    this.firstPlankWidth = firstPlankWidth;
+    this.firstBoardLength = firstBoardLength;
+    this.firstBoardWidth = firstBoardWidth;
     this.expansionGap = expansionGap;
   }
 
-  public int getPlankLength()
+  public int getBoardLength()
   {
-    return plankLength;
+    return boardLength;
   }
 
-  public void setPlankLength(int plankLength)
+  public void setBoardLength(int boardLength)
   {
-    this.plankLength = plankLength;
+    this.boardLength = boardLength;
   }
 
-  public int getPlankWidth()
+  public int getBoardWidth()
   {
-    return plankWidth;
+    return boardWidth;
   }
 
-  public void setPlankWidth(int plankWidth)
+  public void setBoardWidth(int boardWidth)
   {
-    this.plankWidth = plankWidth;
+    this.boardWidth = boardWidth;
   }
 
   public int getRoomLength()
@@ -61,24 +61,24 @@ public class ProjectParameters
     this.roomWidth = roomWidth;
   }
 
-  public int getFirstPlankLength()
+  public int getFirstBoardLength()
   {
-    return firstPlankLength;
+    return firstBoardLength;
   }
 
-  public void setFirstPlankLength(int firstPlankLength)
+  public void setFirstBoardLength(int firstBoardLength)
   {
-    this.firstPlankLength = firstPlankLength;
+    this.firstBoardLength = firstBoardLength;
   }
 
-  public int getFirstPlankWidth()
+  public int getFirstBoardWidth()
   {
-    return firstPlankWidth;
+    return firstBoardWidth;
   }
 
-  public void setFirstPlankWidth(int firstPlankWidth)
+  public void setFirstBoardWidth(int firstBoardWidth)
   {
-    this.firstPlankWidth = firstPlankWidth;
+    this.firstBoardWidth = firstBoardWidth;
   }
 
   public int getExpansionGap()
@@ -90,4 +90,6 @@ public class ProjectParameters
   {
     this.expansionGap = expansionGap;
   }
+
+  
 }

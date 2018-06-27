@@ -4,13 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Optional;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -19,32 +24,29 @@ import org.easydiy.flooring.printing.FloorboardPrinter;
 
 public class GUIBuilder
 {
-  public JFrame buildGUI(ProjectParameters params)
+  public JFrame buildGUI(ProjectParameters initialParams)
   {
-    final FloorCanvas canvas = new FloorCanvas(params);
-    //System.out.println("Canvas size in px=" + canvas.getPreferredSize());
+    final FloorCanvas canvas = new FloorCanvas(initialParams);
     JFrame frame = new JFrame();
     final JPanel basePanel = new JPanel();
     JLabel roomLengthLabel = new JLabel("Room length");
-    final JTextField roomLengthField = new JTextField(String.valueOf(canvas.roomLength), 10);
+    final JTextField roomLengthField = new JTextField(String.valueOf(initialParams.getRoomLength()), 10);
     JLabel roomWidthLabel = new JLabel("Room width");
-    final JTextField roomWidthField = new JTextField(String.valueOf(canvas.roomWidth), 10);
-    JLabel firstPlankLengthFieldLabel = new JLabel("First plank length");
-    final JTextField firstPlankLengthField = new JTextField(String.valueOf(canvas.inputlength), 10);
+    final JTextField roomWidthField = new JTextField(String.valueOf(initialParams.getRoomWidth()), 10);
+    JLabel boardLengthLabel = new JLabel("Board length");
+    final JTextField boardLengthField = new JTextField(String.valueOf(initialParams.getBoardLength()), 10);
+    JLabel boardWidthLabel = new JLabel("Board width");
+    final JTextField boardWidthField = new JTextField(String.valueOf(initialParams.getBoardWidth()), 10);
+    JLabel firstBoardLengthFieldLabel = new JLabel("First board length");
+    final JTextField firstBoardLengthField = new JTextField(String.valueOf(initialParams.getFirstBoardLength()), 10);
 
-    JLabel firstPlankWidthFieldLabel = new JLabel("First plank width");
-    final JTextField firstPlankWidthField = new JTextField(String.valueOf(canvas.inputwidth), 10);
+    JLabel firstBoardWidthFieldLabel = new JLabel("First board width");
+    final JTextField firstBoardWidthField = new JTextField(String.valueOf(initialParams.getFirstBoardWidth()), 10);
 
-    JLabel expansionGapLabel = new JLabel("expansionGap");
-    final JTextField expansionGapField = new JTextField(String.valueOf(canvas.expansionGap), 10);
+    JLabel expansionGapLabel = new JLabel("expansion Gap");
+    final JTextField expansionGapField = new JTextField(String.valueOf(initialParams.getExpansionGap()), 10);
 
-    JMenuBar menuBar = new JMenuBar();
-    JMenu menu = new JMenu("File");
-    menuBar.add(menu);
-    JMenuItem menuItem = new JMenuItem("Print...");
-    menu.add(menuItem);
-
-    menuItem.addActionListener(new FloorboardPrinter(canvas));
+    JMenuBar menuBar = createMenuBar(canvas);
 
     frame.setJMenuBar(menuBar);
 
@@ -53,10 +55,17 @@ public class GUIBuilder
     optionsPanel.add(roomLengthField);
     optionsPanel.add(roomWidthLabel);
     optionsPanel.add(roomWidthField);
-    optionsPanel.add(firstPlankLengthFieldLabel);
-    optionsPanel.add(firstPlankLengthField);
-    optionsPanel.add(firstPlankWidthFieldLabel);
-    optionsPanel.add(firstPlankWidthField);
+    optionsPanel.add(boardLengthLabel);
+    optionsPanel.add(boardLengthField);
+    optionsPanel.add(boardWidthLabel);
+    optionsPanel.add(boardWidthField);
+    optionsPanel.add(firstBoardLengthField);
+    optionsPanel.add(firstBoardWidthFieldLabel);
+    optionsPanel.add(firstBoardWidthField);
+    optionsPanel.add(firstBoardLengthFieldLabel);
+    optionsPanel.add(firstBoardLengthField);
+    optionsPanel.add(firstBoardWidthFieldLabel);
+    optionsPanel.add(firstBoardWidthField);
     optionsPanel.add(expansionGapLabel);
     optionsPanel.add(expansionGapField);
     basePanel.setLayout(new BorderLayout());
@@ -65,33 +74,98 @@ public class GUIBuilder
     basePanel.add(panel, BorderLayout.CENTER);
     frame.add(basePanel);
 
+    /*
+     * JPanel statusPanel = new JPanel(); statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED)); frame.add(statusPanel, BorderLayout.SOUTH); statusPanel.setPreferredSize(new
+     * Dimension(frame.getWidth(), 16)); statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS)); JLabel statusLabel = new JLabel("");
+     * statusLabel.setHorizontalAlignment(SwingConstants.LEFT); statusPanel.add(statusLabel);
+     */
+
     ActionListener commonListener = new ActionListener()
     {
 
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        canvas.inputlength = Integer.parseInt(firstPlankLengthField.getText());
-        canvas.inputwidth = Integer.parseInt(firstPlankWidthField.getText());
-        canvas.roomLength = Integer.parseInt(roomLengthField.getText());
-        canvas.roomWidth = Integer.parseInt(roomWidthField.getText());
-        canvas.expansionGap = Integer.parseInt(expansionGapField.getText());
-        basePanel.repaint();
-
+        ProjectParameters project = canvas.getProjectParameters();
+        project.setRoomLength(Integer.parseInt(roomLengthField.getText()));
+        project.setRoomWidth(Integer.parseInt(roomWidthField.getText()));
+        project.setBoardLength(Integer.parseInt(boardLengthField.getText()));
+        project.setBoardWidth(Integer.parseInt(boardWidthField.getText()));
+        project.setFirstBoardLength(Integer.parseInt(firstBoardLengthField.getText()));
+        project.setFirstBoardWidth(Integer.parseInt(firstBoardWidthField.getText()));
+        project.setExpansionGap(Integer.parseInt(expansionGapField.getText()));
+        canvas.calculatePattern(project);
+        canvas.repaint();
       }
-
     };
 
-    firstPlankLengthField.addActionListener(commonListener);
-    firstPlankWidthField.addActionListener(commonListener);
+    firstBoardLengthField.addActionListener(commonListener);
+    firstBoardWidthField.addActionListener(commonListener);
     roomLengthField.addActionListener(commonListener);
     roomWidthField.addActionListener(commonListener);
     expansionGapField.addActionListener(commonListener);
 
-    //frame.setPreferredSize(new Dimension(1000,500));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
+    canvas.setComponentPopupMenu(createBoardPopupMenu(frame, canvas));
+    canvas.repaint();
+
+    canvas.addMouseListener(new MouseAdapter()
+    {
+      public void mousePressed(MouseEvent e)
+      {
+        Optional<Board> clickedBoard = canvas.getBoard(e.getX(), e.getY());
+        if (clickedBoard.isPresent())
+        {
+          canvas.setSelectedBoard(clickedBoard);
+          canvas.repaint();
+        }
+      }
+
+
+      public void mouseReleased(MouseEvent e)
+      {
+        Optional<Board> clickedBoard = canvas.getBoard(e.getX(), e.getY());
+        if (clickedBoard.isPresent())
+        {
+          canvas.setSelectedBoard(clickedBoard);
+          canvas.repaint();
+        }
+      }
+
+    });
+
     return frame;
+
+  }
+
+  private JPopupMenu createBoardPopupMenu(JFrame frame, FloorCanvas canvas)
+  {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+    replaceMenuItem.addActionListener(new ActionListener()
+    {
+
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        JOptionPane.showMessageDialog(frame, "TODO Replace board=#" + canvas.getSelectedBoard().get().boardNumber);       
+      }
+    });
+    menu.add(replaceMenuItem);
+    return menu;
+  }
+
+  private JMenuBar createMenuBar(final FloorCanvas canvas)
+  {
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu("File");
+    menuBar.add(menu);
+    JMenuItem menuItem = new JMenuItem("Print...");
+    menu.add(menuItem);
+
+    menuItem.addActionListener(new FloorboardPrinter(canvas));
+    return menuBar;
   }
 }
