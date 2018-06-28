@@ -2,6 +2,7 @@ package org.easydiy.flooring.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -95,14 +96,18 @@ public class GUIBuilder
         project.setFirstBoardWidth(Integer.parseInt(firstBoardWidthField.getText()));
         project.setExpansionGap(Integer.parseInt(expansionGapField.getText()));
         canvas.calculatePattern(project);
+        frame.pack();
+        frame.setVisible(true);
         canvas.repaint();
       }
     };
 
+    roomLengthField.addActionListener(commonListener);
+    roomWidthField.addActionListener(commonListener);    
+    boardLengthField.addActionListener(commonListener);
+    boardWidthField.addActionListener(commonListener);
     firstBoardLengthField.addActionListener(commonListener);
     firstBoardWidthField.addActionListener(commonListener);
-    roomLengthField.addActionListener(commonListener);
-    roomWidthField.addActionListener(commonListener);
     expansionGapField.addActionListener(commonListener);
 
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -144,13 +149,34 @@ public class GUIBuilder
   {
     JPopupMenu menu = new JPopupMenu();
     JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+    
+   
+    JTextField field1 = new JTextField(String.valueOf(canvas.getProjectParameters().getBoardLength()));
+    JTextField field2 = new JTextField(String.valueOf(canvas.getProjectParameters().getBoardWidth()));
+    JPanel replaceBoardFormPanel = new JPanel(new GridLayout(0, 1));
+    replaceBoardFormPanel.add(new JLabel("Board Length:"));
+    replaceBoardFormPanel.add(field1);
+    replaceBoardFormPanel.add(new JLabel("Board Width:"));
+    replaceBoardFormPanel.add(field2);
     replaceMenuItem.addActionListener(new ActionListener()
     {
 
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        JOptionPane.showMessageDialog(frame, "TODO Replace board=#" + canvas.getSelectedBoard().get().boardNumber);       
+        Board selectedBoard = canvas.getSelectedBoard().get();
+        
+        int result = JOptionPane.showConfirmDialog(null, replaceBoardFormPanel, "Replace board " + selectedBoard.boardNumber, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);       
+        if (result == JOptionPane.OK_OPTION)
+        {
+          selectedBoard.x = selectedBoard.x - (Integer.valueOf(field1.getText())-selectedBoard.width);
+          selectedBoard.y = selectedBoard.y - (Integer.valueOf(field2.getText())-selectedBoard.height);
+
+          selectedBoard.width=Integer.valueOf(field1.getText());
+          selectedBoard.height=Integer.valueOf(field2.getText());
+          canvas.repaint();
+        }
+          
       }
     });
     menu.add(replaceMenuItem);

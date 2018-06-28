@@ -28,7 +28,7 @@ public class FloorCanvas extends JComponent
   private Optional<Board> selectedBoard = Optional.empty();
 
   private int displayOffset_x = 100;
-  private int displayOffset_y = 100;
+  private int displayOffset_y = 10;
   private PatternCalculator calc;
 
   public FloorCanvas(ProjectParameters params)
@@ -47,7 +47,8 @@ public class FloorCanvas extends JComponent
   
   public void calculatePattern(ProjectParameters project)
   {
-    pattern = calc.calculatePattern(project);
+    this.project = project;
+    this.pattern = calc.calculatePattern(project);
   }
 
   public void paintComponent(Graphics g1)
@@ -75,7 +76,7 @@ public class FloorCanvas extends JComponent
 
   public Dimension getPreferredSize()
   {
-    return new Dimension(mmTopx(project.getRoomLength()), mmTopx(project.getRoomWidth()));
+    return new Dimension(mmTopx(project.getRoomLength() + displayOffset_x), mmTopx(project.getRoomWidth()) + displayOffset_y);
   }
 
   public ProjectParameters getProjectParameters()
@@ -88,8 +89,8 @@ public class FloorCanvas extends JComponent
     Optional<Board> result = Optional.empty();
     for (Board board : pattern)
     {
-      if (mmTopx((int) board.getX()) <= x && x < mmTopx((int) board.getX()) + mmTopx((int) board.getWidth()) && mmTopx((int) board.getY()) <= y
-          && y < mmTopx((int) board.getY()) + mmTopx((int) board.getHeight()))
+      if (mmTopx((int) board.getX()) + displayOffset_x <= x && x < mmTopx((int) board.getX()) + displayOffset_x + mmTopx((int) board.getWidth()) && mmTopx((int) board.getY()) + displayOffset_y <= y
+          && y < mmTopx((int) board.getY()) + displayOffset_y + mmTopx((int) board.getHeight()))
       {
         result = Optional.of(board);
         break;
@@ -102,15 +103,15 @@ public class FloorCanvas extends JComponent
   {
 
     g.setColor(selectBoardColor(board));
-    g.fillRect(mmTopx(board.x), mmTopx(board.y), mmTopx(board.width), mmTopx(board.height));
+    g.fillRect(mmTopx(board.x) + displayOffset_x, mmTopx(board.y) + displayOffset_y, mmTopx(board.width), mmTopx(board.height));
     g.setColor(Color.black);
     String display = "#" + board.boardNumber + "-->" + board.width + "x" + board.height;
     FontMetrics fm = g.getFontMetrics();
     int w = fm.stringWidth(display);
     int h = fm.getAscent();
-    g.drawString(display, mmTopx(board.x) + (mmTopx(board.width) / 2) - (mmTopx(w) / 2), mmTopx(board.y) + (mmTopx(board.height) / 2) + (mmTopx(h) / 4));
+    g.drawString(display, mmTopx(board.x) + displayOffset_x + (mmTopx(board.width) / 2) - (mmTopx(w) / 2), mmTopx(board.y) + displayOffset_y + (mmTopx(board.height) / 2) + (mmTopx(h) / 4));
     g.setColor(Color.black);
-    g.drawRect(mmTopx(board.x), mmTopx(board.y), mmTopx(board.width), mmTopx(board.height));
+    g.drawRect(mmTopx(board.x) + displayOffset_x, mmTopx(board.y) + displayOffset_y, mmTopx(board.width), mmTopx(board.height));
   }
 
   private Color selectBoardColor(Board board)
